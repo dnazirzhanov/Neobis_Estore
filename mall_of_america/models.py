@@ -1,14 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-class Product(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    cat = models.ForeignKey(Category, on_delete=models.PROTECT)
-    sale = models.IntegerField()
-
-    def __str__(self):
-        return self.name
 
 class Category(models.Model):
     name = models.CharField(max_length=255)
@@ -16,6 +7,15 @@ class Category(models.Model):
     def __str__(self):
         return self.name
 
+class Product(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
+    sale = models.IntegerField(default=0, help_text="Enter a discount in percents (%)")
+
+    def __str__(self):
+        return self.name
 
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -35,7 +35,7 @@ class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"User - {self.user} commented the product - {self.prduct.name}"
+        return f"User: {self.user} left a comment on this product: {self.product.name}"
 
 
 
