@@ -1,4 +1,5 @@
 from django.db import models
+from decimal import Decimal
 from django.contrib.auth.models import User
 
 class Category(models.Model):
@@ -27,6 +28,13 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.id} made by {self.user.username}"
+
+    def calculate_total_price(self):
+        price_with_discount = float(self.product.price) * (1 - (self.product.sale / 100))
+        return Decimal(price_with_discount) * self.quantity
+    def save(self, *args, **kwargs):
+        self.total_price = self.calculate_total_price()
+        super(Order, self).save(*args, **kwargs)
 
 class Comment(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
